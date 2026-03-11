@@ -5,40 +5,34 @@ import { POPULAR_STOCK_SYMBOLS } from "@/lib/constants";
 import { cache } from "react";
 
 const FINNHUB_BASE_URL = "https://finnhub.io/api/v1";
-const NEXT_PUBLIC_FINNHUB_API_KEY =
-  process.env.NEXT_PUBLIC_FINNHUB_API_KEY ?? "";
+const NEXT_PUBLIC_FINNHUB_API_KEY = process.env.NEXT_PUBLIC_FINNHUB_API_KEY ?? "";
 
 async function fetchJSON<T>(
-  url: string,
-  revalidateSeconds?: number,
+    url: string,
+    revalidateSeconds?: number,
 ): Promise<T> {
-  const options: RequestInit & { next?: { revalidate?: number } } =
-    revalidateSeconds
-      ? { cache: "force-cache", next: { revalidate: revalidateSeconds } }
-      : { cache: "no-store" };
+    const options: RequestInit & { next?: { revalidate?: number } } = revalidateSeconds
+    ? { cache: "force-cache", next: { revalidate: revalidateSeconds } }
+    : { cache: "no-store" };
 
-  const res = await fetch(url, options);
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new Error(`Fetch failed ${res.status}: ${text}`);
-  }
-  return (await res.json()) as T;
+    const res = await fetch(url, options);
+    if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        throw new Error(`Fetch failed ${res.status}: ${text}`);
+    }
+    return (await res.json()) as T;
 }
 
 export { fetchJSON };
 
-export async function getNews(
-  symbols?: string[],
-): Promise<MarketNewsArticle[]> {
-  try {
+export async function getNews( symbols?: string[],): Promise<MarketNewsArticle[]> {
+    try {
     const range = getDateRange(5);
     const token = process.env.FINNHUB_API_KEY ?? NEXT_PUBLIC_FINNHUB_API_KEY;
     if (!token) {
-      throw new Error("FINNHUB API key is not configured");
+        throw new Error("FINNHUB API key is not configured");
     }
-    const cleanSymbols = (symbols || [])
-      .map((s) => s?.trim().toUpperCase())
-      .filter((s): s is string => Boolean(s));
+    const cleanSymbols = (symbols || []).map((s) => s?.trim().toUpperCase()).filter((s): s is string => Boolean(s));
 
     const maxArticles = 6;
 
